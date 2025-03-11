@@ -285,7 +285,7 @@ export default function GamePage() {
                     <Award className="h-5 w-5 text-yellow-400" />
                     <span>Your Score</span>
                   </div>
-                  <div className="text-4xl font-bold text-gray-300 font-space">
+                  <div className="text-4xl font-bold text-gray-300 font-para">
                     {score}
                   </div>
                 </CardTitle>
