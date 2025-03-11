@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import Starfield from "@/components/StarBackground";
+import StarBackground from "@/components/StarBackground2";
 import Image from "next/image";
 import BackgroundMusic from "@/components/BackgroundMusic";
 import "../fonts.css";
@@ -238,12 +239,13 @@ export default function GamePage() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_bottom,#1B2735_0%,#090A0F_100%)] p-4 md:p-8 relative overflow-hidden">
-      <Starfield
+      {/* <Starfield
         starCount={1000}
         starColor={[255, 255, 255]}
         speedFactor={0.02}
         backgroundColor="black"
-      />
+      /> */}
+      <StarBackground />
       <div className="max-w-5xl mx-auto relative z-10">
         <header className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
           <div className="flex items-center gap-3">

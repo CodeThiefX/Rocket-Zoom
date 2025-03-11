@@ -81,6 +81,8 @@
   }
 }
 
+/* 2. Add this to your global CSS file (e.g., globals.css) */
+
 .star-background {
   position: fixed;
   top: 0;
