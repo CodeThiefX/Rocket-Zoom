@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import Starfield from "@/components/StarBackground";
 import StarBackground from "@/components/StarBackground2";
 import Image from "next/image";
@@ -453,6 +453,17 @@ export default function GamePage() {
         </div>
       </div>
       <BackgroundMusic />
+    </div>
+  );
+}
+
+function Progress({ value, className }: { value: number; className?: string }) {
+  return (
+    <div className={cn("h-2 w-full bg-gray-700 rounded-full", className)}>
+      <div
+        className="h-full bg-gradient-to-r from-red-600 to-yellow-600 rounded-full transition-all duration-300"
+        style={{ width: `${value}%` }}
+      />
     </div>
   );
 }
