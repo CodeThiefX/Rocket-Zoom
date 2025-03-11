@@ -231,7 +231,7 @@ export default function GamePage() {
       <div className="min-h-screen bg-[radial-gradient(ellipse_at_bottom,#1B2735_0%,#090A0F_100%)] flex items-center justify-center">
         <div className="text-white text-center">
           <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4" />
-          <p className="text-xl font-space">LOADING...</p>
+          <p className="text-xl font-para">Loading...</p>
         </div>
       </div>
     );
@@ -249,7 +249,7 @@ export default function GamePage() {
       <div className="max-w-5xl mx-auto relative z-10">
         <header className="flex flex-col sm:flex-row justify-between items-center my-8 gap-4">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl md:text-3xl font-bold text-white font-space">
+            <h1 className="text-3xl md:text-4xl font-bold text-white font-para">
               ROCKET ZOOM
             </h1>
           </div>

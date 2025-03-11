@@ -70,8 +70,8 @@ export default function AuthForm() {
         <div className="mx-auto p-2 rounded-full bg-yellow-600 mb-4 aspect-square flex items-center justify-center">
           <Image src="/rocket.png" alt="Rocket" width={32} height={32} />
         </div>
-        <CardTitle className="text-2xl font-bold font-space">
-          {isLogin ? "Welcome Back!" : "Create Account"}
+        <CardTitle className="text-xl font-bold font-space">
+          {isLogin ? "WELCOME BACK!" : "CREATE ACCOUNT"}
         </CardTitle>
       </CardHeader>
       <CardContent>
