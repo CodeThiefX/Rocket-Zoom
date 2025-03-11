@@ -321,6 +321,8 @@ export default function GamePage() {
                         alt="Rocket"
                         width={80}
                         height={80}
+                        className={`relative -top-[${-80 + speedPercentage}]`}
+                        style={{ top: -(-80 + speedPercentage) }}
                       />
                       {/* <motion.div
                         animate={{

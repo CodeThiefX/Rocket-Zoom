@@ -1,13 +1,14 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { Toaster } from 'sonner';
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Rocket Tapper - The Addictive Tapping Game',
-  description: 'Tap as fast as you can to make your rocket soar higher and higher!',
+  title: "Rocket Zoome",
+  description:
+    "Tap as fast as you can to make your points soar higher and higher!",
 };
 
 export default function RootLayout({
