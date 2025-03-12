@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Rocket Zoome",
+  title: "Rocket Zoom",
   description:
     "Tap as fast as you can to make your points soar higher and higher!",
 };

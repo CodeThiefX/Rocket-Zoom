@@ -2,7 +2,11 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const supabase = createClientComponentClient();
 
-export async function signInOrSignUp(username: string, password: string) {
+export async function signInOrSignUp(
+  username: string,
+  password: string,
+  address?: string // Add this parameter
+) {
   // Check if user exists
   const { data: existingUser } = await supabase
     .from("profiles")
@@ -11,10 +15,13 @@ export async function signInOrSignUp(username: string, password: string) {
     .single();
 
   if (!existingUser) {
+    if (!address) {
+      throw new Error("Wallet address is required for signup");
+    }
     // Create new user directly in profiles
     const { data: newUser, error: createError } = await supabase
       .from("profiles")
-      .insert([{ username, password }])
+      .insert([{ username, password, wallet_address: address }])
       .select()
       .single();
 

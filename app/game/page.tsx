@@ -13,6 +13,7 @@ import {
   LogOut,
   Zap,
   Award,
+  Wallet,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -37,7 +38,6 @@ export default function GamePage() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
   const [lastSavedScore, setLastSavedScore] = useState(0);
   const [speedPercentage, setSpeedPercentage] = useState(20); // For the speed progress bar
   const controls = useAnimation();
@@ -111,41 +111,37 @@ export default function GamePage() {
     }
   };
 
-  // Add useEffect for interval-based score syncing
+  // Replace the existing score syncing useEffect with this new one
   useEffect(() => {
-    let syncInterval: NodeJS.Timeout;
+    // Don't start syncing if there's no user
+    if (!user) return;
 
-    if (user && score !== lastSavedScore) {
-      syncInterval = setInterval(async () => {
-        if (!isSaving && score !== lastSavedScore) {
-          setIsSaving(true);
-          try {
-            const userId = localStorage.getItem("userId");
+    const syncScore = async () => {
+      if (score !== lastSavedScore) {
+        try {
+          const userId = localStorage.getItem("userId");
+          const { error } = await supabase.rpc("update_player_score", {
+            player_score: score,
+            player_id: userId,
+          });
 
-            const { data, error } = await supabase.rpc("update_player_score", {
-              player_score: score,
-              player_id: userId,
-            });
-
-            if (error) {
-              console.error("Error updating score:", error);
-              return;
-            }
+          if (!error) {
             setLastSavedScore(score);
             await fetchLeaderboard();
-          } catch (err: any) {
-            toast.error("Error saving score: " + err.message);
-          } finally {
-            setIsSaving(false);
           }
+        } catch (err) {
+          console.error("Background sync error:", err);
         }
-      }, 5000);
-    }
+      }
+    };
+
+    // Set up continuous syncing every 200 millisecond
+    const syncInterval = setInterval(syncScore, 200);
 
     return () => {
-      if (syncInterval) clearInterval(syncInterval);
+      clearInterval(syncInterval);
     };
-  }, [user, score, lastSavedScore, isSaving]);
+  }, [score, lastSavedScore, user]);
 
   // Update speed percentage whenever gameSpeed changes
   useEffect(() => {
@@ -166,6 +162,9 @@ export default function GamePage() {
   }, [lastTapTime, gameSpeed]);
 
   const handleClick = async () => {
+    // Don't process clicks if score is already 1M or higher
+    if (score >= 1000000) return;
+
     const currentTime = Date.now();
     const timeDiff = currentTime - lastClickTime;
 
@@ -255,6 +254,12 @@ export default function GamePage() {
           </div>
 
           <div className="flex items-center gap-4">
+            <div className="bg-[#181a25] backdrop-blur-sm px-4 py-2 rounded-full text-white font-para hidden md:inline">
+              <span className="font-semibold flex items-center gap-2">
+                <Wallet className="h-4 w-4" />
+                {user?.wallet_address || "---"}
+              </span>
+            </div>
             <div className="bg-[#181a25] backdrop-blur-sm px-4 py-2 rounded-full text-white font-para">
               <span className="font-semibold">{user?.username}</span>
               {getUserRank() !== "N/A" && (
@@ -278,14 +283,14 @@ export default function GamePage() {
         <div className="grid md:grid-cols-5 gap-6">
           {/* Game area - takes 3/5 of the space on desktop */}
           <div className="md:col-span-3 space-y-6 ">
-            <Card className="bg-black/30 backdrop-blur-lg border-gray-500/20 text-white overflow-hidden h-screen max-h-[800px] flex flex-col justify-between">
+            <Card className="bg-black/30 backdrop-blur-lg border-gray-500/20 text-white overflow-hidden h-screen max-h-[650px] md:max-h-[800px] flex flex-col justify-between">
               <CardHeader className="pb-0">
                 <CardTitle className="flex justify-between items-center">
                   <div className="flex items-center gap-2 font-space">
                     <Award className="h-5 w-5 text-yellow-400" />
                     <span className="text-xs">YOUR SCORE</span>
                   </div>
-                  <div className="text-4xl font-bold text-gray-300 font-para">
+                  <div className="md:text-4xl text-lg font-bold text-gray-300 font-para">
                     {score.toLocaleString()}
                   </div>
                 </CardTitle>
@@ -319,11 +324,11 @@ export default function GamePage() {
                     <div className="relative">
                       {/* <Rocket size={80} className="text-white" /> */}
                       <Image
-                        src="moon.png"
+                        src="/moon.png"
                         alt="moon"
                         width={120}
                         height={120}
-                        className={`relative -top-[320px]`}
+                        className={`relative bottom-[130px] md:-top-[300px] left-1/2 transform -translate-x-1/2 -top-1/2`}
                       />
 
                       <Image
@@ -333,7 +338,12 @@ export default function GamePage() {
                         height={80}
                         className={`relative left-1/2 transform -translate-x-1/2 -top-1/2`}
                         // style={{ top: -(-80 + speedPercentage) }}
-                        style={{ top: -0.00035 * score + "px" }}
+                        style={{
+                          top:
+                            window.innerWidth < 768
+                              ? -0.000178 * score + "px"
+                              : -0.00035 * score + "px",
+                        }}
                       />
                       {/* <motion.div
                         animate={{
@@ -374,21 +384,21 @@ export default function GamePage() {
                     onClick={handleClick}
                     className="w-full mt-4 bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700 text-white border-none shadow-lg shadow-gray-900/30 font-para"
                     size="lg"
-                    disabled={isSaving}
+                    disabled={score >= 1000000}
                   >
-                    {isSaving ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      <span className="text-lg font-bold">TAP TO BOOST!</span>
-                    )}
+                    <span className="text-lg font-bold">
+                      {score >= 1000000
+                        ? "You now qualify for an airdrop"
+                        : "TAP TO BOOST!"}
+                    </span>
                   </Button>
 
                   <p className="text-xs text-center text-gray-400 mt-2 font-para">
                     Tap faster to increase your rocket speed and earn more
                     points!
+                  </p>
+                  <p className="text-xs text-center text-gray-400 mt-2 font-para">
+                    Reach the moon to qualify for an airdrop!
                   </p>
                 </div>
               </CardContent>

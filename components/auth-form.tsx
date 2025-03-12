@@ -15,6 +15,7 @@ export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [address, setAddress] = useState(""); // Add this
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +28,14 @@ export default function AuthForm() {
     }
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
+      return false;
+    }
+    if (!isLogin && !address.trim()) {
+      setError("Wallet address is required");
+      return false;
+    }
+    if (!isLogin && (address.length < 32 || address.length > 44)) {
+      setError("Solana wallet address must be between 32 and 44 characters");
       return false;
     }
     return true;
@@ -42,7 +51,8 @@ export default function AuthForm() {
     try {
       const { user, isNew } = await signInOrSignUp(
         username.toLowerCase(),
-        password
+        password,
+        isLogin ? undefined : address.trim() // Add address parameter
       );
 
       if (user) {
@@ -112,6 +122,26 @@ export default function AuthForm() {
               {showPassword ? <EyeOff size={24} /> : <Eye size={24} />}
             </button>
           </div>
+          {!isLogin && (
+            <div className="space-y-2">
+              <Input
+                type="text"
+                placeholder="Solana Wallet Address"
+                value={address}
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                  setError("");
+                }}
+                disabled={isLoading}
+                className="bg-white/20 border-white/20 text-white placeholder:text-white/70"
+                required
+              />
+              <p className="text-yellow-400 text-xs">
+                ⚠️ Please verify your wallet address carefully. You won{`'`}t be
+                able to change it after signing up.
+              </p>
+            </div>
+          )}
           {error && <p className="text-red-400 text-sm">{error}</p>}
           <Button
             type="submit"

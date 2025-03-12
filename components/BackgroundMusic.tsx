@@ -20,7 +20,7 @@ export default function BackgroundMusic() {
       <audio ref={audioRef} src="/zoom.mp3" loop />
       <button
         onClick={() => setIsMuted(!isMuted)}
-        className="fixed bottom-4 right-4 bg-white/10 hover:bg-white/20 p-2 rounded-full backdrop-blur-sm transition-all"
+        className="fixed bottom-4 right-4 bg-white/10 hover:bg-white/20 p-2 rounded-full backdrop-blur-sm transition-all z-40"
       >
         {isMuted ? (
           <svg
