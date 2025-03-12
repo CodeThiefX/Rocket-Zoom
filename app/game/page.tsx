@@ -277,8 +277,8 @@ export default function GamePage() {
 
         <div className="grid md:grid-cols-5 gap-6">
           {/* Game area - takes 3/5 of the space on desktop */}
-          <div className="md:col-span-3 space-y-6">
-            <Card className="bg-black/30 backdrop-blur-lg border-gray-500/20 text-white overflow-hidden">
+          <div className="md:col-span-3 space-y-6 ">
+            <Card className="bg-black/30 backdrop-blur-lg border-gray-500/20 text-white overflow-hidden h-screen max-h-[800px] flex flex-col justify-between">
               <CardHeader className="pb-0">
                 <CardTitle className="flex justify-between items-center">
                   <div className="flex items-center gap-2 font-space">
@@ -286,7 +286,7 @@ export default function GamePage() {
                     <span className="text-xs">YOUR SCORE</span>
                   </div>
                   <div className="text-4xl font-bold text-gray-300 font-para">
-                    {score}
+                    {score.toLocaleString()}
                   </div>
                 </CardTitle>
               </CardHeader>
@@ -319,12 +319,21 @@ export default function GamePage() {
                     <div className="relative">
                       {/* <Rocket size={80} className="text-white" /> */}
                       <Image
+                        src="moon.png"
+                        alt="moon"
+                        width={120}
+                        height={120}
+                        className={`relative -top-[320px]`}
+                      />
+
+                      <Image
                         src="/rocket.png"
                         alt="Rocket"
                         width={80}
                         height={80}
-                        className={`relative -top-[${-80 + speedPercentage}]`}
-                        style={{ top: -(-80 + speedPercentage) }}
+                        className={`relative left-1/2 transform -translate-x-1/2 -top-1/2`}
+                        // style={{ top: -(-80 + speedPercentage) }}
+                        style={{ top: -0.00035 * score + "px" }}
                       />
                       {/* <motion.div
                         animate={{
@@ -398,7 +407,7 @@ export default function GamePage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin font-para">
-                  {leaderboard.map((entry, index) => {
+                  {leaderboard.slice(0, 10).map((entry, index) => {
                     const isCurrentUser = entry.username === user?.username;
                     const rankColors = {
                       1: "bg-yellow-500 text-black",
